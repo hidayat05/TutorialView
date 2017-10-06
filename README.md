@@ -2,11 +2,6 @@
 
 A simple and Elegant Showcase view for Android
 
-<a href="https://play.google.com/store/apps/details?id=com.github.florent37.florent.champigny">
-  <img alt="Android app on Google Play" src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
-</a>
-
-[![screen](https://raw.githubusercontent.com/florent37/TutoShowcase/master/media/sample.png)](https://github.com/florent37/TutoShowcase)
 
 ```java
 TutoShowcase.from(this)
@@ -28,15 +23,6 @@ TutoShowcase.from(this)
     .show();
 ```
 
-# Download
-
-<a href='https://ko-fi.com/A160LCC' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
-[ ![Download](https://api.bintray.com/packages/florent37/maven/TutoShowcase/images/download.svg) ](https://bintray.com/florent37/maven/TutoShowcase/_latestVersion)
-
-```groovy
-compile 'com.github.florent37:tutoshowcase:1.0.1'
-```
 
 # Tutorial
 
@@ -54,7 +40,6 @@ TutoShowcase.from(this)
     .show()
 ```
 
-[![screen](https://raw.githubusercontent.com/florent37/TutoShowcase/master/media/content.png)](https://github.com/florent37/TutoShowcase)
 
 # Indicators
 
@@ -65,18 +50,26 @@ You can higlight some elements to user
 ```java
 .on(view)
 .addCircle()
+.setPadding(10)
+.withBorder()
+.borderPadding() 
+.borderColor(R.color.primary) 
 ```
 
-[![screen](https://raw.githubusercontent.com/florent37/TutoShowcase/master/media/circle.png)](https://github.com/florent37/TutoShowcase)
 
 ## RoundRect
 
 ```java
 .on(view)
-.addRoundRect()
+.addRoundRect() // RoundRect with radius default
+.addRoundWithRadius(1.5F) 
+.addRoundWithoutRadius() 
+.setPadding(10)
+.withBorder()
+.borderPadding()
+.borderColor(R.color.primary)
 ```
 
-[![screen](https://raw.githubusercontent.com/florent37/TutoShowcase/master/media/roundrect.png)](https://github.com/florent37/TutoShowcase)
 
 # Actions
 
@@ -96,7 +89,6 @@ Some actions can be explained to the user
 .displaySwipableLeft()
 ```
 
-[![screen](https://raw.githubusercontent.com/florent37/TutoShowcase/master/media/swipeLeft.gif)](https://github.com/florent37/TutoShowcase)
 
 ## Swipable Right
 
@@ -105,7 +97,6 @@ Some actions can be explained to the user
 .displaySwipableRight()
 ```
 
-[![screen](https://raw.githubusercontent.com/florent37/TutoShowcase/master/media/swipeRight.gif)](https://github.com/florent37/TutoShowcase)
 
 # Events
 
@@ -115,7 +106,7 @@ You can listen for indicator click
 .on(view)
 . //your indicator
 .onClick(new View.OnClickListener(){
-    public void onClick(View view){
+    public void onClick(View view){``
          //your action
     }
 }
@@ -136,6 +127,28 @@ TutoShowcase.from(this)
     .show()
 ```
 
-<a href="https://play.google.com/store/apps/details?id=com.github.florent37.florent.champigny">
-  <img alt="Android app on Google Play" src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
-</a>
+
+# RecyclerView or ListView
+
+```java
+listView.postDelayed(new Runnable() {
+    @Override
+    public void run() {
+        TutoShowCase.from(this)
+                .setFitsSystemWindows(true)
+                .setBackgroundColor(color)
+                .setContentView(R.layout.layout_target)
+                .on(listView.getChildAt(0).findViewById(targetId))
+                .addCircle()
+                .show()
+                .onClickContentView(R.id.rl_container, null) // disable dismiss
+                .onClickContentView(R.id.item, 
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+							// todo
+                    }
+                });
+    }
+}, 0);
+
