@@ -59,9 +59,9 @@ public final class TutoShowcase {
                 if (content != null) {
                     content.addView(container, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                     this.container.addView(tutoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                    if(android.os.Build.VERSION.SDK_INT >= 16) {
+                    if (android.os.Build.VERSION.SDK_INT >= 16) {
                         View inflatedLayout = content.getChildAt(0);
-                        this.fitsSystemWindows = inflatedLayout != null ? inflatedLayout.getFitsSystemWindows() : false;
+                        this.fitsSystemWindows = inflatedLayout != null && inflatedLayout.getFitsSystemWindows();
                     }
                 }
             }
@@ -108,7 +108,7 @@ public final class TutoShowcase {
                         if (parent instanceof ViewGroup) {
                             ((ViewGroup) parent).removeView(view);
                         }
-                        if(listener != null) {
+                        if (listener != null) {
                             listener.onDismissed();
                         }
                     }
@@ -188,6 +188,9 @@ public final class TutoShowcase {
     private static class ViewActionsSettings {
         private boolean animated = true;
         private boolean withBorder = false;
+        private int borderPadding;
+        private int padding;
+        private int borderColor;
         @Nullable
         private View.OnClickListener onClickListener;
 
@@ -341,7 +344,11 @@ public final class TutoShowcase {
             int cy = rect.centerY() - getStatusBarOffset();
             int radius = (int) (Math.max(rect.width(), rect.height()) / 2f * additionalRadiusRatio);
             Circle circle = new Circle(cx, cy, radius);
-            circle.setDisplayBorder(settings.withBorder);
+            boolean isWithBorder = settings.withBorder;
+            circle.setDisplayBorder(isWithBorder);
+            if (isWithBorder) {
+                circle.setBorderColor(settings.borderColor);
+            }
             tutoShowcase.tutoView.addCircle(circle);
 
             addClickableView(rect, settings.onClickListener, additionalRadiusRatio);
@@ -350,14 +357,24 @@ public final class TutoShowcase {
         }
 
         public ShapeViewActionsEditor addRoundRect() {
-            return addRoundRect(DEFAULT_ADDITIONAL_RADIUS_RATIO);
+            return addRoundRect(true, DEFAULT_ADDITIONAL_RADIUS_RATIO);
         }
 
-        public ShapeViewActionsEditor addRoundRect(final float additionalRadiusRatio) {
+        public ShapeViewActionsEditor addRoundWithRadius(float radius) {
+            return addRoundRect(true, radius);
+        }
+
+        public ShapeViewActionsEditor addRoundWithoutRadius(){
+            return addRoundRect(false, 0);
+        }
+
+        public ShapeViewActionsEditor addRoundRect(final boolean withRadius,
+                                                   final float additionalRadiusRatio) {
+
             view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
-                    addRoundRectOnView(additionalRadiusRatio);
+                    addRoundRectOnView(withRadius, additionalRadiusRatio);
                     view.getViewTreeObserver().removeOnPreDrawListener(this);
                     return false;
                 }
@@ -381,19 +398,23 @@ public final class TutoShowcase {
             return new ShapeViewActionsEditor(this);
         }
 
-        private void addRoundRectOnView(float additionalRadiusRatio) {
+        private void addRoundRectOnView(boolean withRadius, float additionalRadiusRatio) {
             Rect rect = new Rect();
             view.getGlobalVisibleRect(rect);
 
-            int padding = 40;
+            int padding = settings.padding;
 
             final int x = rect.left - padding;
             final int y = rect.top - getStatusBarOffset() - padding;
             final int width = rect.width() + 2 * padding;
             final int height = rect.height() + 2 * padding;
 
-            RoundRect roundRect = new RoundRect(x, y, width, height);
-            roundRect.setDisplayBorder(settings.withBorder);
+            RoundRect roundRect = new RoundRect(x, y, width, height, withRadius, settings.borderPadding);
+            boolean isWithBorder = settings.withBorder;
+            roundRect.setDisplayBorder(isWithBorder);
+            if (isWithBorder) {
+                roundRect.setBorderColor(settings.borderColor);
+            }
             tutoShowcase.tutoView.addRoundRect(roundRect);
             addClickableView(rect, settings.onClickListener, additionalRadiusRatio);
             tutoShowcase.tutoView.postInvalidate();
@@ -474,8 +495,25 @@ public final class TutoShowcase {
             super(viewActions);
         }
 
+        public ShapeViewActionsEditor setPadding(int padding){
+            this.viewActions.settings.padding = padding;
+            return this;
+        }
+
         public ShapeViewActionsEditor withBorder() {
             this.viewActions.settings.withBorder = true;
+            return this;
+        }
+
+        public ShapeViewActionsEditor borderPadding(int padding){
+            this.viewActions.settings.borderPadding = padding;
+            return this;
+        }
+
+        public ShapeViewActionsEditor borderColor(@ColorInt int color ){
+            if (this.viewActions.settings.withBorder) {
+                this.viewActions.settings.borderColor = color;
+            }
             return this;
         }
 
@@ -490,12 +528,12 @@ public final class TutoShowcase {
             super(viewActions);
         }
 
-        public ActionViewActionsEditor delayed(int delay){
+        public ActionViewActionsEditor delayed(int delay) {
             this.viewActions.settings.delay = delay;
             return this;
         }
 
-        public ActionViewActionsEditor duration(int duration){
+        public ActionViewActionsEditor duration(int duration) {
             this.viewActions.settings.duration = duration;
             return this;
         }

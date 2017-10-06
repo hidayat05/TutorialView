@@ -8,6 +8,7 @@
 package com.github.florent37.tutoshowcase.shapes;
 
 import android.graphics.Canvas;
+import android.support.annotation.ColorInt;
 
 public class Circle extends Shape {
     private int x;

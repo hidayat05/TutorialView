@@ -42,8 +42,8 @@ public class TutoShowcaseMainActivity extends AppCompatActivity {
                 .setContentView(R.layout.tuto_showcase_tuto_sample)
                 .setFitsSystemWindows(true)
                 .on(R.id.about)
-                .addCircle()
-                .withBorder()
+                .addRoundWithoutRadius()
+                .borderColor(getResources().getColor(android.R.color.holo_orange_dark))
                 .onClick(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -53,7 +53,7 @@ public abstract class Shape {
 
     public void setBorderColor(int borderColor) {
         this.borderColor = borderColor;
-        this.paint.setColor(borderColor);
+        this.borderPaint.setColor(borderColor);
     }
 
     public Paint getBorderPaint() {
